@@ -1,20 +1,17 @@
 import mongoose from "mongoose";
 
-const roles = ["Medecin", "Patient", "Secretaire"] as const;
-
-
 interface IUser extends mongoose.Document {
     username: string;
     email: string;
     password: string;
-    role: typeof roles[number];
+    role: mongoose.Schema.Types.ObjectId;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: roles, required: true }
+    role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", required: true }
 
 });
 

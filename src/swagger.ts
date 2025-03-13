@@ -1,6 +1,8 @@
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import { Express } from "express";
+import express from "express";
+
+const router = express.Router();
 
 const options = {
     definition: {
@@ -8,12 +10,23 @@ const options = {
         info: {
             title: "API Auth avec Express et TypeScript",
             version: "1.0.0",
+            description: "API de gestion des utilisateurs avec rôles (Secretaire, Medecin, Patient)"
+        },
+        components: {
+            securitySchemes: {
+                BearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT"
+                }
+            }
         },
     },
-    apis: [`${__dirname}/routes/*.ts`]};
+    apis: ["./src/routes/*.ts"]
+};
 
 const swaggerSpec = swaggerJsDoc(options);
 
-export const setupSwagger = (app: Express) => {
-    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-};
+router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+
+export default router;

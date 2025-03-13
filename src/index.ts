@@ -1,15 +1,18 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./utils/connectDB";
-import authRoutes from "./routes/authRoutes";
-import swaggerJsDoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
 import cors from "cors";
+import { dRoles } from "./utils/dRoles";
+import swaggerRoutes from "./swagger";
+import authRouter from './routes/authRoutes';
+import rdvRoutes from "./routes/rdvRoutes";
+
 
 dotenv.config();
 
 const app = express();
 connectDB();
+dRoles();
 
 app.use(express.json());
 
@@ -19,22 +22,9 @@ app.use(cors({
     allowedHeaders: "Content-Type,Authorization"
 }));
 
-
-const options = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "API Auth avec Express et TypeScript",
-            version: "1.0.0",
-        },
-    },
-    apis: [`${__dirname}/routes/*.ts`], 
-};
-
-const swaggerSpec = swaggerJsDoc(options);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-app.use("/auth", authRoutes);
+app.use('/auth', authRouter);
+app.use("/rdv", rdvRoutes);
+app.use(swaggerRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
